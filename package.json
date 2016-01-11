@@ -1,0 +1,17 @@
+{
+  "name": "callback-stack",
+  "version": "1.0.0",
+  "description": "Small library for creating group of callback and reacting on all their execution",
+  "main": "callback-stack.js",
+  "author": "smertos",
+  "keywords": ["stack", "calback", "callback-hell", "async"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Smertos/callback-stack.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Smertos/callback-stack/issues"
+  },
+  "homepage": "https://github.com/Smertos/callback-stack"
+}
