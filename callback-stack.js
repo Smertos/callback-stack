@@ -5,7 +5,6 @@
 
 module.exports = (function(startCount) {
 	var self = this;
-	this.callbacks = [];
 	this.onDoneCallbacks = [];
 	this.catches = [];
 	this.size = 0;
@@ -13,26 +12,26 @@ module.exports = (function(startCount) {
 	if(!startCount) startCount = 0;
 	if(startCount < 0) throw new Error('Start size cannot be lower than 0');
 	
-	this.newCallback = this._addCallback = function() {
-		self.size = self.callbacks.push(function() {
-			Array.prototype.slice.call(arguments).forEach(function(elem) {
-				if(elem instanceof Error)
-					self.catches.forEach(function(errCb){
-						errCb(elem);
-					});
-			});
-			self.done++;
-			self._check();
+	var execFunc = function() {
+		Array.prototype.slice.call(arguments).forEach(function(elem) {
+			if(elem && elem instanceof Error)
+				self.catches.forEach(function(errCb){
+					errCb(elem);
+				});
 		});
-		return self.callbacks[self.size - 1];
+		self.done++;
+		self._check();
+	};
+	
+	this.newCallback = this._addCallback = function() {
+		self.size++;
+		return execFunc;
 	};
 	
 	this.newCallbacks = this._addCallbacks = function(num) {
 		if(num < 0) throw new Error('Number of callback to add to stack cannot be lower than 0');
-		for(var i = 0; i < num; i++) {
-			self._addCallback();
-		}
-		return self.callbacks.slice(self.callbacks.length - num, self.callbacks.length);
+		self.size += num;
+		return new Array(num).fill(execFunc);
 	};
 	
 	this._check = function() {
@@ -49,21 +48,17 @@ module.exports = (function(startCount) {
 	};
 
 	this.forEach = function(callback) {
-		var i = 0;
-		self.callbacks.forEach(function(elem){
-			callback(elem, i);
-			i++;
-		});
+		for(var i = 0; i < self.size; i++)
+				callback(execFunc, i);
 		return self;
 	};
 	
 	this.getCallbacks = function() {
-		return self.callbacks;
+		return new Array(self.size).fill(execFunc);
 	};
 	
-	this.getCallback = function(index) {
-		if(index >= self.callbacks.length)
-		return self.callbacks[index];
+	this.getCallback = function() {
+		return execFunc;
 	};
 
 	this.then = function(callback) {

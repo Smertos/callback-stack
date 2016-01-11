@@ -1,6 +1,6 @@
 {
   "name": "callback-stack",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Small library for creating group of callback and reacting on all their execution",
   "main": "callback-stack.js",
   "author": "smertos",
