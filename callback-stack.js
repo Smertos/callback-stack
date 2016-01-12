@@ -9,8 +9,10 @@ module.exports = (function(startCount) {
 	this.catches = [];
 	this.size = 0;
 	
-	if(!startCount) startCount = 0;
-	if(startCount < 0) throw new Error('Start size cannot be lower than 0');
+	if(startCount && typeof startCount === 'number') this.size = startCount;
+	
+	if(startCount && typeof startCount !== 'number') throw new Error('Given start size is not a number');
+	if(startCount && startCount < 0) throw new Error('Start size cannot be lower than 0');
 	
 	var execFunc = function() {
 		Array.prototype.slice.call(arguments).forEach(function(elem) {
