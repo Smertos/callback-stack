@@ -1,5 +1,5 @@
 /*
-  Callback Stack Library
+  Callback Stack Library v1.2.0
   Written by Smertos
 */
 
@@ -8,6 +8,7 @@ module.exports = (function(startCount) {
 	this.onDoneCallbacks = [];
 	this.catches = [];
 	this.size = 0;
+	this.checksPause = 300;
 	
 	if(startCount && typeof startCount === 'number') this.size = startCount;
 	
@@ -22,7 +23,6 @@ module.exports = (function(startCount) {
 				});
 		});
 		self.done++;
-		self._check();
 	};
 	
 	this.newCallback = this._addCallback = function() {
@@ -47,6 +47,8 @@ module.exports = (function(startCount) {
 					});
 				}
 			});
+		else
+			setTimeout(self._check, self.checksPause);
 	};
 
 	this.forEach = function(callback) {
@@ -61,6 +63,13 @@ module.exports = (function(startCount) {
 	
 	this.getCallback = function() {
 		return execFunc;
+	};
+	
+	this.checkEvery = function(checkPauseTime) {
+		if(typeof checkPauseTime !== 'number') throw new Error('Check pause time must a number');
+		else if(checkPauseTime < 1) throw new Error('Check pause time must be higher than 0');
+		else self.checksPause = checkPauseTime;
+		return self;
 	};
 
 	this.then = function(callback) {
@@ -81,7 +90,6 @@ module.exports = (function(startCount) {
 		self.done = 0;
 	};
 	
-	
-	
 	this.reset();
+	this._check();
 });
