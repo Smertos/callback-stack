@@ -26,6 +26,9 @@ cstack.then(() => {
 cstack.catch((err) => {
 	console.log('Error: ' + err.message);
 });
+
+//Set how frequently (im milliseconds) checks for complecity will be performed
+cstack.checkEvery(666);
 	
 //Create new callback and execute it (newCallback returns created callback)
 //After that, .then callback(s) will be executed, because there's only one added to stack callback
@@ -57,6 +60,17 @@ cstack.reset();
 //And you ofcourse can just get whole stack as array
 cstack.getCallbacks().forEach((cb) => {
 	console.log('Executing callback');
+	cb();
+});
+
+//And ofcourse you can do things like this
+//Most of functions return stack obj so it allows you to build structures like this
+var cstack2 = new CS(1).checkEvery(10000).then(() => {
+	console.log('Success');
+}).catch((err) => {
+	console.log('Error: ' + err.message);
+}).forEach((cb, i) => {
+	fs.readFile();
 	cb();
 });
 		

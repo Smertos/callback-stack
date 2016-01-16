@@ -8,7 +8,7 @@ module.exports = (function(startCount) {
 	this.onDoneCallbacks = [];
 	this.catches = [];
 	this.size = 0;
-	this.checksPause = 300;
+	this.checksPause = 100;
 	
 	if(startCount && typeof startCount === 'number') this.size = startCount;
 	
@@ -53,7 +53,13 @@ module.exports = (function(startCount) {
 
 	this.forEach = function(callback) {
 		for(var i = 0; i < self.size; i++)
-				callback(execFunc, i);
+				try {
+					callback(execFunc, i);
+				} catch(err) {
+					self.catches.forEach(function(errCb){
+						errCb(err);
+					});
+				}
 		return self;
 	};
 	
